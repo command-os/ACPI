@@ -1,7 +1,9 @@
+mod bgrt;
 mod rsdp;
 mod rsdt;
 mod xsdt;
 
+pub use bgrt::*;
 pub use rsdp::*;
 pub use rsdt::*;
 pub use xsdt::*;

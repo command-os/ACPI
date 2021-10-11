@@ -1,6 +1,6 @@
 pub enum RSDTType {
-    RSDT(&'static super::RSDT<'static, ()>),
-    XSDT(&'static super::XSDT<'static, ()>),
+    RSDT(&'static super::RSDT),
+    XSDT(&'static super::XSDT),
 }
 
 #[repr(C, packed)]
@@ -50,10 +50,15 @@ impl RSDP {
         unsafe {
             match self.revision {
                 0 => RSDTType::RSDT(
-                    &*((self.rsdt_addr as u64 + crate::PHYS_VIRT_OFFSET) as *const super::RSDT<()>),
+                    ((self.rsdt_addr as u64 + amd64::paging::PHYS_VIRT_OFFSET)
+                        as *const super::RSDT)
+                        .as_ref()
+                        .unwrap(),
                 ),
                 _ => RSDTType::XSDT(
-                    &*((self.xsdt_addr + crate::PHYS_VIRT_OFFSET) as *const super::XSDT<()>),
+                    ((self.xsdt_addr + amd64::paging::PHYS_VIRT_OFFSET) as *const super::XSDT)
+                        .as_ref()
+                        .unwrap(),
                 ),
             }
         }
