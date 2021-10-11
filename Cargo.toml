@@ -1,0 +1,15 @@
+[package]
+name = "acpi"
+version = "0.1.0"
+authors = ["VisualDevelopment"]
+publish = false
+edition = "2021"
+
+[profile.dev]
+lto = "thin"
+
+[profile.release]
+lto = "thin"
+
+[dependencies]
+amd64 = { path = "../amd64" }
