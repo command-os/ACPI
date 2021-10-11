@@ -1,5 +1,6 @@
 #![no_std]
-
-pub mod tables;
+#![deny(warnings, clippy::cargo)]
 
 extern crate alloc;
+
+pub mod tables;

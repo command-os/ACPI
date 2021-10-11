@@ -1,8 +1,10 @@
-pub mod interrupt_controllers;
+use core::mem::size_of;
+
+use modular_bitfield::{bitfield, specifiers::*};
 
 use crate::alloc::vec::Vec;
-use core::mem::size_of;
-use modular_bitfield::{bitfield, specifiers::*};
+
+pub mod interrupt_controllers;
 
 #[bitfield(bits = 32)]
 #[repr(C, packed)]

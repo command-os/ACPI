@@ -1,15 +1,15 @@
+pub use bgrt::*;
+pub use madt::*;
+pub use rsdp::*;
+pub use rsdt::*;
+pub use xsdt::*;
+
 mod bgrt;
 mod madt;
 mod rsdp;
 mod rsdt;
 pub mod signatures;
 mod xsdt;
-
-pub use bgrt::*;
-pub use madt::*;
-pub use rsdp::*;
-pub use rsdt::*;
-pub use xsdt::*;
 
 #[repr(C, packed)]
 pub struct SdtHeader {

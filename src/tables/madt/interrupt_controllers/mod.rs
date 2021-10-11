@@ -1,10 +1,3 @@
-mod io_apic;
-mod iso;
-mod local_apic;
-mod local_apic_addr_override;
-mod local_apic_nmi;
-mod nmi_source;
-
 use core::any::type_name;
 
 pub use io_apic::*;
@@ -13,6 +6,13 @@ pub use local_apic::*;
 pub use local_apic_addr_override::*;
 pub use local_apic_nmi::*;
 pub use nmi_source::*;
+
+mod io_apic;
+mod iso;
+mod local_apic;
+mod local_apic_addr_override;
+mod local_apic_nmi;
+mod nmi_source;
 
 #[derive(Debug)]
 pub enum InterruptController {
