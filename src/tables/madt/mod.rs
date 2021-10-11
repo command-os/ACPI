@@ -1,5 +1,6 @@
 pub mod interrupt_controllers;
 
+use crate::alloc::vec::Vec;
 use core::mem::size_of;
 use modular_bitfield::{bitfield, specifiers::*};
 
@@ -28,19 +29,25 @@ impl Madt {
         self.flags.pcat_compat()
     }
 
-    pub fn entries<'a>(&self) -> &'a [&'a super::SdtHeader] {
-        let len = (self.length as usize - size_of::<Self>()) / 8;
-        // This is very safe. Everything is fine here.
+    pub fn into_ic_vec<'a>(&self) -> Vec<&'a interrupt_controllers::IcHeader> {
+        let mut ret = Vec::new();
+        let len = self.length as usize - size_of::<Self>();
+
+        // Uhm. Sure
         unsafe {
-            core::ptr::slice_from_raw_parts(
-                (self as *const _ as *const u8)
-                    .add(size_of::<super::SdtHeader>() + amd64::paging::PHYS_VIRT_OFFSET as usize)
-                    as *const &'a super::SdtHeader,
-                len,
-            )
-            .as_ref()
-            .unwrap()
+            let mut ptr = (self as *const _ as *const u8).add(size_of::<Self>());
+            let end = (self as *const _ as *const u8).add(size_of::<Self>() + len);
+
+            while ptr != end {
+                let ic = (ptr as *const interrupt_controllers::IcHeader)
+                    .as_ref()
+                    .unwrap();
+                ret.push(ic);
+                ptr = ptr.add(ic.length());
+            }
         }
+
+        ret
     }
 }
 
