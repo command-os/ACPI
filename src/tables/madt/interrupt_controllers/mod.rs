@@ -1,6 +1,7 @@
 mod io_apic;
 mod iso;
 mod local_apic;
+mod local_apic_addr_override;
 mod local_apic_nmi;
 mod nmi_source;
 
@@ -9,6 +10,7 @@ use core::any::type_name;
 pub use io_apic::*;
 pub use iso::*;
 pub use local_apic::*;
+pub use local_apic_addr_override::*;
 pub use local_apic_nmi::*;
 pub use nmi_source::*;
 
@@ -19,7 +21,7 @@ pub enum InterruptController {
     Iso(&'static Iso),
     NmiSource(&'static NmiSource),
     LocalApicNmi(&'static LocalApicNmi),
-    LocalApicAddrOverride(&'static IcHeader),
+    LocalApicAddrOverride(&'static LocalApicAddrOverride),
     IoSapic(&'static IcHeader),
     LocalSapic(&'static IcHeader),
     PlatformInterruptSrcs(&'static IcHeader),
@@ -55,7 +57,7 @@ impl IcHeader {
                 3 => InterruptController::NmiSource(&*(self as *const _ as *const NmiSource)),
                 4 => InterruptController::LocalApicNmi(&*(self as *const _ as *const LocalApicNmi)),
                 5 => InterruptController::LocalApicAddrOverride(
-                    &*(self as *const _ as *const IcHeader),
+                    &*(self as *const _ as *const LocalApicAddrOverride),
                 ),
                 6 => InterruptController::IoSapic(&*(self as *const _ as *const IcHeader)),
                 7 => InterruptController::LocalSapic(&*(self as *const _ as *const IcHeader)),

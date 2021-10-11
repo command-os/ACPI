@@ -1,23 +1,19 @@
 use core::any::type_name;
 
 #[repr(C, packed)]
-pub struct NmiSource {
+pub struct LocalApicAddrOverride {
     header: super::IcHeader,
-    flags: amd64::spec::mps::Inti,
-    gsi: u32,
+    reserved: u16,
+    local_apic_addr: u64,
 }
 
-impl NmiSource {
-    pub fn flags(&self) -> amd64::spec::mps::Inti {
-        self.flags
-    }
-
-    pub fn gsi(&self) -> u32 {
-        self.gsi
+impl LocalApicAddrOverride {
+    pub fn local_apic_addr(&self) -> u64 {
+        self.local_apic_addr
     }
 }
 
-impl core::ops::Deref for NmiSource {
+impl core::ops::Deref for LocalApicAddrOverride {
     type Target = super::IcHeader;
 
     fn deref(&self) -> &Self::Target {
@@ -25,12 +21,11 @@ impl core::ops::Deref for NmiSource {
     }
 }
 
-impl core::fmt::Debug for NmiSource {
+impl core::fmt::Debug for LocalApicAddrOverride {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct(type_name::<Self>())
             .field("header", &self.header)
-            .field("flags", &self.flags())
-            .field("gsi", &self.gsi())
+            .field("local_apic_addr", &self.local_apic_addr())
             .finish()
     }
 }

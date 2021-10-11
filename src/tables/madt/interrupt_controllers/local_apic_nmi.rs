@@ -33,6 +33,7 @@ impl core::ops::Deref for LocalApicNmi {
 impl core::fmt::Debug for LocalApicNmi {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct(type_name::<Self>())
+            .field("header", &self.header)
             .field("acpi_proc_uid", &self.acpi_proc_uid())
             .field("flags", &self.flags())
             .field("local_apic_lint_num", &self.local_apic_lint_num())

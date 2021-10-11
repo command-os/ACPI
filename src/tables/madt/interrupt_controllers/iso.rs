@@ -38,6 +38,7 @@ impl core::ops::Deref for Iso {
 impl core::fmt::Debug for Iso {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct(type_name::<Self>())
+            .field("header", &self.header)
             .field("bus", &self.bus())
             .field("source", &self.source())
             .field("gsi", &self.gsi())
