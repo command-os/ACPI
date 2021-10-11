@@ -1,10 +1,11 @@
-pub enum RSDTType {
-    RSDT(&'static super::RSDT),
-    XSDT(&'static super::XSDT),
+#[derive(Debug)]
+pub enum RsdtType {
+    Rsdt(&'static super::Rsdt),
+    Xsdt(&'static super::Xsdt),
 }
 
 #[repr(C, packed)]
-pub struct RSDP {
+pub struct Rsdp {
     signature: [u8; 8],
     checksum: u8,
     oem_id: [u8; 6],
@@ -16,7 +17,7 @@ pub struct RSDP {
     reserved: [u8; 3],
 }
 
-impl RSDP {
+impl Rsdp {
     pub fn validate(&self) -> bool {
         let bytes =
             unsafe { core::slice::from_raw_parts(self as *const _ as *const u8, self.length()) };
@@ -45,33 +46,25 @@ impl RSDP {
         }
     }
 
-    pub fn into_type(&self) -> RSDTType {
+    pub fn into_type(&self) -> RsdtType {
         // This is fine.
         unsafe {
             match self.revision {
-                0 => RSDTType::RSDT(
-                    ((self.rsdt_addr as u64 + amd64::paging::PHYS_VIRT_OFFSET)
-                        as *const super::RSDT)
-                        .as_ref()
-                        .unwrap(),
-                ),
-                _ => RSDTType::XSDT(
-                    ((self.xsdt_addr + amd64::paging::PHYS_VIRT_OFFSET) as *const super::XSDT)
-                        .as_ref()
-                        .unwrap(),
-                ),
+                0 => RsdtType::Rsdt((self.rsdt_addr as *const super::Rsdt).as_ref().unwrap()),
+                _ => RsdtType::Xsdt((self.xsdt_addr as *const super::Xsdt).as_ref().unwrap()),
             }
         }
     }
 }
 
-impl core::fmt::Debug for RSDP {
+impl core::fmt::Debug for Rsdp {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        f.debug_struct("RSDP")
+        f.debug_struct(core::any::type_name::<Self>())
             .field("valid", &self.validate())
             .field("oem_id", &self.oem_id())
             .field("revision", &self.revision())
             .field("length", &self.length())
+            .field("type", &self.into_type())
             .finish()
     }
 }

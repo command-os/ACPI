@@ -1,19 +1,18 @@
 use core::mem::size_of;
 
 #[repr(C, packed)]
-pub struct RSDT {
-    header: super::SDTHeader,
+pub struct Rsdt {
+    header: super::SdtHeader,
 }
 
-impl RSDT {
-    pub fn entries<'a>(&self) -> &'a [&'a super::SDTHeader] {
-        let len = (self.length as usize - size_of::<super::SDTHeader>()) / 4;
+impl Rsdt {
+    pub fn entries<'a>(&self) -> &'a [&'a super::SdtHeader] {
+        let len = (self.length as usize - size_of::<Self>()) / 4;
         // This is very safe. Everything is fine here.
         unsafe {
             core::ptr::slice_from_raw_parts(
-                (self as *const _ as *const u8)
-                    .add(size_of::<super::SDTHeader>() + amd64::paging::PHYS_VIRT_OFFSET as usize)
-                    as *const &'a super::SDTHeader,
+                (self as *const _ as *const u8).add(size_of::<Self>())
+                    as *const &'a super::SdtHeader,
                 len,
             )
             .as_ref()
@@ -22,18 +21,19 @@ impl RSDT {
     }
 }
 
-impl core::ops::Deref for RSDT {
-    type Target = super::SDTHeader;
+impl core::ops::Deref for Rsdt {
+    type Target = super::SdtHeader;
 
     fn deref(&self) -> &Self::Target {
         &self.header
     }
 }
 
-impl core::fmt::Debug for RSDT {
+impl core::fmt::Debug for Rsdt {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        f.debug_struct("RSDT")
+        f.debug_struct(core::any::type_name::<Self>())
             .field("header", &self.header)
+            .field("entries", &self.entries())
             .finish()
     }
 }

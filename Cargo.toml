@@ -12,4 +12,5 @@ lto = "thin"
 lto = "thin"
 
 [dependencies]
+modular-bitfield = "0.11.2"
 amd64 = { path = "../amd64" }
