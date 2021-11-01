@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) VisualDevelopment 2021-2021.
+ * This project is licensed by the Creative Commons Attribution-NoCommercial-NoDerivatives licence.
+ */
+
 #[derive(Debug)]
 pub enum RsdtType {
     Rsdt(&'static super::Rsdt),
@@ -59,7 +64,7 @@ impl Rsdp {
 
 impl core::fmt::Debug for Rsdp {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        f.debug_struct(core::any::type_name::<Self>())
+        f.debug_struct("Rsdp")
             .field("valid", &self.validate())
             .field("oem_id", &self.oem_id())
             .field("revision", &self.revision())

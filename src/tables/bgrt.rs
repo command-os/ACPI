@@ -1,4 +1,10 @@
+/*
+ * Copyright (c) VisualDevelopment 2021-2021.
+ * This project is licensed by the Creative Commons Attribution-NoCommercial-NoDerivatives licence.
+ */
+
 #[repr(C, packed)]
+#[derive(Debug, Clone, Copy)]
 pub struct Bgrt {
     header: super::SdtHeader,
     /// Must be 1
@@ -38,18 +44,5 @@ impl core::ops::Deref for Bgrt {
 
     fn deref(&self) -> &Self::Target {
         &self.header
-    }
-}
-
-impl core::fmt::Debug for Bgrt {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        f.debug_struct(core::any::type_name::<Self>())
-            .field("header", &self.header)
-            .field("version", &self.version())
-            .field("status", &self.status())
-            .field("image_type", &self.image_type())
-            .field("image_addr", &self.image_addr())
-            .field("image_off", &self.image_off())
-            .finish()
     }
 }

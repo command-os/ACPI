@@ -1,4 +1,10 @@
+/*
+ * Copyright (c) VisualDevelopment 2021-2021.
+ * This project is licensed by the Creative Commons Attribution-NoCommercial-NoDerivatives licence.
+ */
+
 #[repr(C, packed)]
+#[derive(Debug, Clone, Copy)]
 pub struct IoApic {
     header: super::IcHeader,
     io_apic_id: u8,
@@ -26,16 +32,5 @@ impl core::ops::Deref for IoApic {
 
     fn deref(&self) -> &Self::Target {
         &self.header
-    }
-}
-
-impl core::fmt::Debug for IoApic {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        f.debug_struct(core::any::type_name::<Self>())
-            .field("header", &self.header)
-            .field("io_apic_id", &self.io_apic_id())
-            .field("io_apic_address", &self.io_apic_address())
-            .field("gsi_base", &self.gsi_base())
-            .finish()
     }
 }

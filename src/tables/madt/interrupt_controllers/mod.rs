@@ -1,4 +1,7 @@
-use core::any::type_name;
+/*
+ * Copyright (c) VisualDevelopment 2021-2021.
+ * This project is licensed by the Creative Commons Attribution-NoCommercial-NoDerivatives licence.
+ */
 
 pub use io_apic::*;
 pub use iso::*;
@@ -38,6 +41,7 @@ pub enum InterruptController {
 }
 
 #[repr(C, packed)]
+#[derive(Debug, Clone, Copy)]
 pub struct IcHeader {
     type_: u8,
     length: u8,
@@ -82,14 +86,5 @@ impl IcHeader {
                 }
             }
         }
-    }
-}
-
-impl core::fmt::Debug for IcHeader {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        f.debug_struct(type_name::<Self>())
-            .field("type", &self.type_)
-            .field("length", &self.length())
-            .finish_non_exhaustive()
     }
 }

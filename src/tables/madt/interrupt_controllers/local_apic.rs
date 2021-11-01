@@ -1,4 +1,9 @@
-use modular_bitfield::{bitfield, specifiers::*};
+/*
+ * Copyright (c) VisualDevelopment 2021-2021.
+ * This project is licensed by the Creative Commons Attribution-NoCommercial-NoDerivatives licence.
+ */
+
+use modular_bitfield::prelude::*;
 
 #[bitfield(bits = 32)]
 #[repr(C, u32)]

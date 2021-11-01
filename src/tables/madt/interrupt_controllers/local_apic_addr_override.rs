@@ -1,6 +1,10 @@
-use core::any::type_name;
+/*
+ * Copyright (c) VisualDevelopment 2021-2021.
+ * This project is licensed by the Creative Commons Attribution-NoCommercial-NoDerivatives licence.
+ */
 
 #[repr(C, packed)]
+#[derive(Debug, Clone, Copy)]
 pub struct LocalApicAddrOverride {
     header: super::IcHeader,
     reserved: u16,
@@ -18,14 +22,5 @@ impl core::ops::Deref for LocalApicAddrOverride {
 
     fn deref(&self) -> &Self::Target {
         &self.header
-    }
-}
-
-impl core::fmt::Debug for LocalApicAddrOverride {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        f.debug_struct(type_name::<Self>())
-            .field("header", &self.header)
-            .field("local_apic_addr", &self.local_apic_addr())
-            .finish()
     }
 }

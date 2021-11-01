@@ -1,6 +1,10 @@
-use core::any::type_name;
+/*
+ * Copyright (c) VisualDevelopment 2021-2021.
+ * This project is licensed by the Creative Commons Attribution-NoCommercial-NoDerivatives licence.
+ */
 
 #[repr(C, packed)]
+#[derive(Debug, Clone, Copy)]
 pub struct LocalApicNmi {
     header: super::IcHeader,
     acpi_proc_uid: u8,
@@ -27,16 +31,5 @@ impl core::ops::Deref for LocalApicNmi {
 
     fn deref(&self) -> &Self::Target {
         &self.header
-    }
-}
-
-impl core::fmt::Debug for LocalApicNmi {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        f.debug_struct(type_name::<Self>())
-            .field("header", &self.header)
-            .field("acpi_proc_uid", &self.acpi_proc_uid())
-            .field("flags", &self.flags())
-            .field("local_apic_lint_num", &self.local_apic_lint_num())
-            .finish()
     }
 }

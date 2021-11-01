@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) VisualDevelopment 2021-2021.
+ * This project is licensed by the Creative Commons Attribution-NoCommercial-NoDerivatives licence.
+ */
+
 use core::mem::size_of;
 
 #[repr(C, packed)]
@@ -31,7 +36,7 @@ impl core::ops::Deref for Rsdt {
 
 impl core::fmt::Debug for Rsdt {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        f.debug_struct(core::any::type_name::<Self>())
+        f.debug_struct("Rsdt")
             .field("header", &self.header)
             .field("entries", &self.entries())
             .finish()

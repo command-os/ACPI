@@ -1,6 +1,10 @@
-use core::any::type_name;
+/*
+ * Copyright (c) VisualDevelopment 2021-2021.
+ * This project is licensed by the Creative Commons Attribution-NoCommercial-NoDerivatives licence.
+ */
 
 #[repr(C, packed)]
+#[derive(Debug, Clone, Copy)]
 pub struct Iso {
     header: super::IcHeader,
     bus: u8,
@@ -32,17 +36,5 @@ impl core::ops::Deref for Iso {
 
     fn deref(&self) -> &Self::Target {
         &self.header
-    }
-}
-
-impl core::fmt::Debug for Iso {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        f.debug_struct(type_name::<Self>())
-            .field("header", &self.header)
-            .field("bus", &self.bus())
-            .field("source", &self.source())
-            .field("gsi", &self.gsi())
-            .field("flags", &self.flags())
-            .finish()
     }
 }
