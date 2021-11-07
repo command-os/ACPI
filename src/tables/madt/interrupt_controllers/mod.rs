@@ -60,17 +60,23 @@ impl IcHeader {
                 2 => InterruptController::Iso(&*(self as *const _ as *const Iso)),
                 3 => InterruptController::NmiSource(&*(self as *const _ as *const NmiSource)),
                 4 => InterruptController::LocalApicNmi(&*(self as *const _ as *const LocalApicNmi)),
-                5 => InterruptController::LocalApicAddrOverride(
-                    &*(self as *const _ as *const LocalApicAddrOverride),
-                ),
+                5 => {
+                    InterruptController::LocalApicAddrOverride(
+                        &*(self as *const _ as *const LocalApicAddrOverride),
+                    )
+                }
                 6 => InterruptController::IoSapic(&*(self as *const _ as *const IcHeader)),
                 7 => InterruptController::LocalSapic(&*(self as *const _ as *const IcHeader)),
-                8 => InterruptController::PlatformInterruptSrcs(
-                    &*(self as *const _ as *const IcHeader),
-                ),
-                9 => InterruptController::ProcessorLocalx2Apic(
-                    &*(self as *const _ as *const IcHeader),
-                ),
+                8 => {
+                    InterruptController::PlatformInterruptSrcs(
+                        &*(self as *const _ as *const IcHeader),
+                    )
+                }
+                9 => {
+                    InterruptController::ProcessorLocalx2Apic(
+                        &*(self as *const _ as *const IcHeader),
+                    )
+                }
                 0xA => InterruptController::Localx2ApicNmi(&*(self as *const _ as *const IcHeader)),
                 0xB => InterruptController::GicCpu(&*(self as *const _ as *const IcHeader)),
                 0xC => InterruptController::GicDist(&*(self as *const _ as *const IcHeader)),
