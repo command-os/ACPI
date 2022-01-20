@@ -1,7 +1,7 @@
 [package]
 name = "acpi"
 description = "The Firework ACPI implementation crate"
-repository = "https://bitbucket.org/firework-os/acpi"
+repository = "https://github.com/Firework-OS/ACPI"
 keywords = ["firework", "acpi", "amd64", "x86_64"]
 categories = ["no-std"]
 version = "0.1.0"
