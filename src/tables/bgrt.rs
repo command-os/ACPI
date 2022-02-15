@@ -6,37 +6,15 @@
 #[repr(C, packed)]
 #[derive(Debug, Clone, Copy)]
 pub struct Bgrt {
-    header: super::SdtHeader,
+    pub header: super::SdtHeader,
     /// Must be 1
-    version: u16,
+    pub version: u16,
     /// bits 2:1 orientation offset; 0b00 = no offset, 0b01 = 90, 0b10 = 180, 0b11 = 270
-    status: u8,
+    pub status: u8,
     /// Must be 0
-    image_type: u8,
-    image_addr: u64,
-    image_off: (u32, u32),
-}
-
-impl Bgrt {
-    pub fn version(&self) -> u16 {
-        self.version
-    }
-
-    pub fn status(&self) -> u8 {
-        self.status
-    }
-
-    pub fn image_type(&self) -> u8 {
-        self.image_type
-    }
-
-    pub fn image_addr(&self) -> u64 {
-        self.image_addr
-    }
-
-    pub fn image_off(&self) -> (u32, u32) {
-        self.image_off
-    }
+    pub image_type: u8,
+    pub image_addr: u64,
+    pub image_off: (u32, u32),
 }
 
 impl core::ops::Deref for Bgrt {

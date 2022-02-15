@@ -7,24 +7,10 @@
 #[derive(Debug, Clone, Copy)]
 pub struct IoApic {
     header: super::IcHeader,
-    io_apic_id: u8,
-    reserved: u8,
-    io_apic_address: u32,
-    gsi_base: u32,
-}
-
-impl IoApic {
-    pub fn io_apic_id(&self) -> u8 {
-        self.io_apic_id
-    }
-
-    pub fn io_apic_address(&self) -> u32 {
-        self.io_apic_address
-    }
-
-    pub fn gsi_base(&self) -> u32 {
-        self.gsi_base
-    }
+    pub io_apic_id: u8,
+    _reserved: u8,
+    pub io_apic_address: u32,
+    pub gsi_base: u32,
 }
 
 impl core::ops::Deref for IoApic {

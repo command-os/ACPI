@@ -7,23 +7,9 @@
 #[derive(Debug, Clone, Copy)]
 pub struct LocalApicNmi {
     header: super::IcHeader,
-    acpi_proc_uid: u8,
-    flags: amd64::spec::mps::Inti,
-    local_apic_lint_num: u8,
-}
-
-impl LocalApicNmi {
-    pub fn acpi_proc_uid(&self) -> u8 {
-        self.acpi_proc_uid
-    }
-
-    pub fn flags(&self) -> amd64::spec::mps::Inti {
-        self.flags
-    }
-
-    pub fn local_apic_lint_num(&self) -> u8 {
-        self.local_apic_lint_num
-    }
+    pub acpi_proc_id: u8,
+    pub flags: amd64::spec::mps::Inti,
+    pub lint: u8,
 }
 
 impl core::ops::Deref for LocalApicNmi {

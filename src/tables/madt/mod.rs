@@ -17,7 +17,7 @@ pub struct MadtFlags {
     #[skip(setters)]
     pcat_compat: bool,
     #[skip]
-    reserved: B31,
+    __: B31,
 }
 
 #[repr(C, packed)]

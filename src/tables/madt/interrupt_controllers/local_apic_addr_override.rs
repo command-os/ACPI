@@ -7,14 +7,8 @@
 #[derive(Debug, Clone, Copy)]
 pub struct LocalApicAddrOverride {
     header: super::IcHeader,
-    reserved: u16,
-    local_apic_addr: u64,
-}
-
-impl LocalApicAddrOverride {
-    pub fn local_apic_addr(&self) -> u64 {
-        self.local_apic_addr
-    }
+    _reserved: u16,
+    pub local_apic_addr: u64,
 }
 
 impl core::ops::Deref for LocalApicAddrOverride {
