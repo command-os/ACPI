@@ -1,6 +1,8 @@
 //! Copyright (c) VisualDevelopment 2021-2022.
 //! This project is licensed by the Creative Commons Attribution-NoCommercial-NoDerivatives licence.
 
+use core::any::type_name;
+
 pub use bgrt::*;
 pub use madt::*;
 pub use rsdp::*;
@@ -19,13 +21,13 @@ mod xsdt;
 pub struct SdtHeader {
     signature: [u8; 4],
     length: u32,
-    revision: u8,
+    pub revision: u8,
     checksum: u8,
     oem_id: [u8; 6],
     oem_table_id: [u8; 8],
-    oem_revision: u32,
+    pub oem_revision: u32,
     creator_id: [u8; 4],
-    creator_revision: u32,
+    pub creator_revision: u32,
 }
 
 impl SdtHeader {
@@ -45,10 +47,6 @@ impl SdtHeader {
         self.length.try_into().unwrap()
     }
 
-    pub fn revision(&self) -> u8 {
-        self.revision
-    }
-
     pub fn oem_id(&self) -> &str {
         core::str::from_utf8(&self.oem_id).unwrap().trim()
     }
@@ -57,31 +55,25 @@ impl SdtHeader {
         core::str::from_utf8(&self.oem_table_id).unwrap().trim()
     }
 
-    pub fn oem_revision(&self) -> u32 {
-        self.oem_revision
-    }
-
     pub fn creator_id(&self) -> &str {
         core::str::from_utf8(&self.creator_id).unwrap().trim()
-    }
-
-    pub fn creator_revision(&self) -> u32 {
-        self.creator_revision
     }
 }
 
 impl core::fmt::Debug for SdtHeader {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        f.debug_struct(core::any::type_name::<Self>())
+        let rev = self.oem_revision;
+        let cr_rev = self.creator_revision;
+        f.debug_struct(type_name::<Self>())
             .field("valid", &self.validate())
             .field("signature", &self.signature())
             .field("length", &self.length())
-            .field("revision", &self.revision())
+            .field("revision", &self.revision)
             .field("oem_id", &self.oem_id())
             .field("oem_table_id", &self.oem_table_id())
-            .field("oem_revision", &self.oem_revision())
+            .field("oem_revision", &rev)
             .field("creator_id", &self.creator_id())
-            .field("creator_revision", &self.creator_revision())
+            .field("creator_revision", &cr_rev)
             .finish()
     }
 }

@@ -1,6 +1,8 @@
 //! Copyright (c) VisualDevelopment 2021-2022.
 //! This project is licensed by the Creative Commons Attribution-NoCommercial-NoDerivatives licence.
 
+use core::any::type_name;
+
 #[derive(Debug)]
 pub enum RsdtType {
     Rsdt(&'static super::Rsdt),
@@ -12,7 +14,7 @@ pub struct Rsdp {
     signature: [u8; 8],
     checksum: u8,
     oem_id: [u8; 6],
-    revision: u8,
+    pub revision: u8,
     rsdt_addr: u32,
     length: u32,
     xsdt_addr: u64,
@@ -37,10 +39,6 @@ impl Rsdp {
         core::str::from_utf8(&self.oem_id).unwrap().trim()
     }
 
-    pub fn revision(&self) -> u8 {
-        self.revision
-    }
-
     /// If ACPI 1.0, return fixed size, else return length field
     pub fn length(&self) -> usize {
         match self.revision {
@@ -53,8 +51,14 @@ impl Rsdp {
         // This is fine.
         unsafe {
             match self.revision {
-                0 => RsdtType::Rsdt((self.rsdt_addr as *const super::Rsdt).as_ref().unwrap()),
-                _ => RsdtType::Xsdt((self.xsdt_addr as *const super::Xsdt).as_ref().unwrap()),
+                0 => {
+                    let addr = self.rsdt_addr as usize + amd64::paging::PHYS_VIRT_OFFSET;
+                    RsdtType::Rsdt((addr as *const super::Rsdt).as_ref().unwrap())
+                }
+                _ => {
+                    let addr = self.xsdt_addr as usize + amd64::paging::PHYS_VIRT_OFFSET;
+                    RsdtType::Xsdt((addr as *const super::Xsdt).as_ref().unwrap())
+                }
             }
         }
     }
@@ -62,10 +66,10 @@ impl Rsdp {
 
 impl core::fmt::Debug for Rsdp {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
-        f.debug_struct("Rsdp")
+        f.debug_struct(type_name::<Self>())
             .field("valid", &self.validate())
             .field("oem_id", &self.oem_id())
-            .field("revision", &self.revision())
+            .field("revision", &self.revision)
             .field("length", &self.length())
             .field("type", &self.into_type())
             .finish()
