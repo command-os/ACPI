@@ -7,7 +7,7 @@ use modular_bitfield::prelude::*;
 
 use crate::alloc::vec::Vec;
 
-pub mod interrupt_controllers;
+pub mod ic;
 
 #[bitfield(bits = 32)]
 #[repr(C, packed)]
@@ -34,7 +34,7 @@ impl Madt {
         self.flags.pcat_compat()
     }
 
-    pub fn into_ic_vec<'a>(&self) -> Vec<&'a interrupt_controllers::IcHeader> {
+    pub fn into_ic_vec<'a>(&self) -> Vec<&'a ic::IcHeader> {
         let mut ret = Vec::new();
         let len = self.length as usize - size_of::<Self>();
 
@@ -44,9 +44,7 @@ impl Madt {
             let end = (self as *const _ as *const u8).add(size_of::<Self>() + len);
 
             while ptr != end {
-                let ic = (ptr as *const interrupt_controllers::IcHeader)
-                    .as_ref()
-                    .unwrap();
+                let ic = (ptr as *const ic::IcHeader).as_ref().unwrap();
                 ret.push(ic);
                 ptr = ptr.add(ic.length());
             }

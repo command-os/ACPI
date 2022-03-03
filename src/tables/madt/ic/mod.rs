@@ -1,19 +1,10 @@
 //! Copyright (c) VisualDevelopment 2021-2022.
 //! This project is licensed by the Creative Commons Attribution-NoCommercial-NoDerivatives licence.
 
-pub use io_apic::*;
-pub use iso::*;
-pub use local_apic::*;
-pub use local_apic_addr_override::*;
-pub use local_apic_nmi::*;
-pub use nmi_source::*;
+use self::{ioapic::*, lapic::*};
 
-mod io_apic;
-mod iso;
-mod local_apic;
-mod local_apic_addr_override;
-mod local_apic_nmi;
-mod nmi_source;
+pub mod ioapic;
+pub mod lapic;
 
 #[derive(Debug)]
 pub enum InterruptController {
