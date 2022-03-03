@@ -1,16 +1,34 @@
 //! Copyright (c) VisualDevelopment 2021-2022.
 //! This project is licensed by the Creative Commons Attribution-NoCommercial-NoDerivatives licence.
 
+use modular_bitfield::prelude::*;
+
+#[derive(Debug, BitfieldSpecifier, Clone, Copy)]
+#[repr(u8)]
+#[bits = 2]
+pub enum BgrtOrientation {
+    None = 0,
+    Orient90,
+    Orient180,
+    Orient270,
+}
+
+#[bitfield(bits = 8)]
+#[derive(Debug, Clone, Copy)]
+pub struct BgrtStatus {
+    pub displayed: bool,
+    pub offset: BgrtOrientation,
+    #[skip]
+    __: B5,
+}
+
 #[repr(C, packed)]
 #[derive(Debug, Clone, Copy)]
 pub struct Bgrt {
-    pub header: super::SdtHeader,
-    /// Must be 1
-    pub version: u16,
-    /// bits 2:1 orientation offset; 0b00 = no offset, 0b01 = 90, 0b10 = 180, 0b11 = 270
-    pub status: u8,
-    /// Must be 0
-    pub image_type: u8,
+    header: super::SdtHeader,
+    _ver: u16,
+    pub status: BgrtStatus,
+    _type: u8,
     pub image_addr: u64,
     pub image_off: (u32, u32),
 }
