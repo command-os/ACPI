@@ -32,54 +32,12 @@ pub enum InterruptController {
 #[repr(C, packed)]
 #[derive(Debug, Clone, Copy)]
 pub struct IcHeader {
-    type_: u8,
+    pub type_: u8,
     length: u8,
 }
 
 impl IcHeader {
     pub fn length(&self) -> usize {
         self.length.try_into().unwrap()
-    }
-
-    pub fn into_type(&self) -> InterruptController {
-        unsafe {
-            match self.type_ {
-                0 => InterruptController::LocalApic(&*(self as *const _ as *const LocalApic)),
-                1 => InterruptController::IoApic(&*(self as *const _ as *const IoApic)),
-                2 => InterruptController::Iso(&*(self as *const _ as *const Iso)),
-                3 => InterruptController::NmiSource(&*(self as *const _ as *const NmiSource)),
-                4 => InterruptController::LocalApicNmi(&*(self as *const _ as *const LocalApicNmi)),
-                5 => {
-                    InterruptController::LocalApicAddrOverride(
-                        &*(self as *const _ as *const LocalApicAddrOverride),
-                    )
-                }
-                6 => InterruptController::IoSapic(&*(self as *const _ as *const IcHeader)),
-                7 => InterruptController::LocalSapic(&*(self as *const _ as *const IcHeader)),
-                8 => {
-                    InterruptController::PlatformInterruptSrcs(
-                        &*(self as *const _ as *const IcHeader),
-                    )
-                }
-                9 => {
-                    InterruptController::ProcessorLocalx2Apic(
-                        &*(self as *const _ as *const IcHeader),
-                    )
-                }
-                0xA => InterruptController::Localx2ApicNmi(&*(self as *const _ as *const IcHeader)),
-                0xB => InterruptController::GicCpu(&*(self as *const _ as *const IcHeader)),
-                0xC => InterruptController::GicDist(&*(self as *const _ as *const IcHeader)),
-                0xD => InterruptController::GicMsiFrame(&*(self as *const _ as *const IcHeader)),
-                0xE => InterruptController::GicRedist(&*(self as *const _ as *const IcHeader)),
-                0xF => InterruptController::GicIts(&*(self as *const _ as *const IcHeader)),
-                0x10 => InterruptController::MpWakeup(&*(self as *const _ as *const IcHeader)),
-                0x11..=0x7F => {
-                    InterruptController::Reserved(&*(self as *const _ as *const IcHeader))
-                }
-                0x80..=0xFF => {
-                    InterruptController::OemReserved(&*(self as *const _ as *const IcHeader))
-                }
-            }
-        }
     }
 }
