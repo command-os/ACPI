@@ -34,7 +34,7 @@ pub struct MadtIterator {
 
 impl Iterator for MadtIterator {
     type Item = InterruptController;
-    
+
     fn next(&mut self) -> core::option::Option<<Self as core::iter::Iterator>::Item> {
         if self.curr == self.total {
             None
