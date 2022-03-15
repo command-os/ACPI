@@ -3,18 +3,11 @@
 
 use core::any::type_name;
 
-pub use bgrt::*;
-pub use madt::*;
-pub use rsdp::*;
-pub use rsdt::*;
-pub use xsdt::*;
-
-mod bgrt;
-mod madt;
-mod rsdp;
-mod rsdt;
-pub mod signatures;
-mod xsdt;
+pub mod bgrt;
+pub mod madt;
+pub mod rsdp;
+pub mod rsdt;
+pub mod xsdt;
 
 #[repr(C, packed)]
 #[derive(Clone, Copy)]

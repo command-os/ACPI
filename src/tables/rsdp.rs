@@ -3,10 +3,12 @@
 
 use core::any::type_name;
 
+use super::{rsdt::Rsdt, xsdt::Xsdt};
+
 #[derive(Debug)]
 pub enum RsdtType {
-    Rsdt(&'static super::Rsdt),
-    Xsdt(&'static super::Xsdt),
+    Rsdt(&'static Rsdt),
+    Xsdt(&'static Xsdt),
 }
 
 #[repr(C, packed)]
@@ -24,9 +26,10 @@ pub struct Rsdp {
 
 impl Rsdp {
     pub fn validate(&self) -> bool {
-        let bytes =
-            unsafe { core::slice::from_raw_parts(self as *const _ as *const u8, self.length()) };
-        let sum = bytes.iter().fold(0u8, |sum, &byte| sum.wrapping_add(byte));
+        let sum = unsafe {
+            let bytes = core::slice::from_raw_parts(self as *const _ as *const u8, self.length());
+            bytes.iter().fold(0u8, |sum, &byte| sum.wrapping_add(byte))
+        };
 
         sum == 0
     }
@@ -53,11 +56,11 @@ impl Rsdp {
             match self.revision {
                 0 => {
                     let addr = self.rsdt_addr as usize + amd64::paging::PHYS_VIRT_OFFSET;
-                    RsdtType::Rsdt((addr as *const super::Rsdt).as_ref().unwrap())
+                    RsdtType::Rsdt((addr as *const Rsdt).as_ref().unwrap())
                 }
                 _ => {
                     let addr = self.xsdt_addr as usize + amd64::paging::PHYS_VIRT_OFFSET;
-                    RsdtType::Xsdt((addr as *const super::Xsdt).as_ref().unwrap())
+                    RsdtType::Xsdt((addr as *const Xsdt).as_ref().unwrap())
                 }
             }
         }
