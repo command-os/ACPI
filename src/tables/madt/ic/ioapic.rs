@@ -78,17 +78,24 @@ impl IoApic {
     }
 
     pub fn read_redir(&self, num: u32) -> IoApicRedirect {
-        let base = IoApicRegister::IoRedirTbl as u32 + num * 2;
+        let reg = IoApicRegister::IoRedirTbl as u32 + num * 2;
         IoApicRedirect::from_bytes(
             [
-                self.read(base).to_le_bytes(),
-                self.read(base + 1).to_le_bytes(),
+                self.read(reg).to_le_bytes(),
+                self.read(reg + 1).to_le_bytes(),
             ]
             .concat()
             .as_slice()
             .try_into()
             .unwrap(),
         )
+    }
+
+    pub fn write_redir(&self, num: u32, redir: IoApicRedirect) {
+        let reg = IoApicRegister::IoRedirTbl as u32 + num * 2;
+        let val = u64::from_le_bytes(redir.into_bytes());
+        self.write(reg, val as u32);
+        self.write(reg + 1, (val >> 32) as u32);
     }
 }
 
