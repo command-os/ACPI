@@ -8,6 +8,7 @@ pub mod madt;
 pub mod rsdp;
 pub mod rsdt;
 pub mod xsdt;
+pub mod mcfg;
 
 #[repr(C, packed)]
 #[derive(Clone, Copy)]
