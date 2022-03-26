@@ -6,7 +6,6 @@ use core::mem::size_of;
 use modular_bitfield::prelude::*;
 
 use self::ic::{ioapic::*, lapic::*, *};
-use crate::alloc::vec::Vec;
 
 pub mod ic;
 
@@ -107,25 +106,6 @@ impl Madt {
             curr: 0,
             total: self.length as usize - size_of::<Self>(),
         }
-    }
-
-    pub fn into_ic_vec<'a>(&self) -> Vec<&'a IcHeader> {
-        let mut ret = Vec::new();
-        let len = self.length as usize - size_of::<Self>();
-
-        // Uhm. Sure
-        unsafe {
-            let mut ptr = (self as *const _ as *const u8).add(size_of::<Self>());
-            let end = (self as *const _ as *const u8).add(size_of::<Self>() + len);
-
-            while ptr != end {
-                let ic = (ptr as *const IcHeader).as_ref().unwrap();
-                ret.push(ic);
-                ptr = ptr.add(ic.length());
-            }
-        }
-
-        ret
     }
 }
 

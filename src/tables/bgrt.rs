@@ -4,7 +4,6 @@
 use modular_bitfield::prelude::*;
 
 #[derive(Debug, BitfieldSpecifier, Clone, Copy)]
-#[repr(u8)]
 #[bits = 2]
 pub enum BgrtOrientation {
     None = 0,
@@ -22,13 +21,13 @@ pub struct BgrtStatus {
     __: B5,
 }
 
-#[repr(C, packed)]
 #[derive(Debug, Clone, Copy)]
+#[repr(C, packed)]
 pub struct Bgrt {
     header: super::SdtHeader,
-    _ver: u16,
+    __: u16,
     pub status: BgrtStatus,
-    _type: u8,
+    ___: u8,
     pub image_addr: u64,
     pub image_off: (u32, u32),
 }

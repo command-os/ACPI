@@ -4,8 +4,8 @@
 use modular_bitfield::prelude::*;
 
 #[bitfield(bits = 32)]
-#[repr(C, u32)]
 #[derive(Debug, Clone, Copy)]
+#[repr(u32)]
 pub struct LocalApicFlags {
     #[skip(setters)]
     pub enabled: bool,
@@ -15,8 +15,8 @@ pub struct LocalApicFlags {
     __: B30,
 }
 
-#[repr(C, packed)]
 #[derive(Debug, Clone, Copy)]
+#[repr(C, packed)]
 pub struct LocalApic {
     header: super::IcHeader,
     pub acpi_uid: u8,
@@ -32,11 +32,11 @@ impl core::ops::Deref for LocalApic {
     }
 }
 
-#[repr(C, packed)]
 #[derive(Debug, Clone, Copy)]
+#[repr(C, packed)]
 pub struct LocalApicAddrOverride {
     header: super::IcHeader,
-    _reserved: u16,
+    __: u16,
     pub addr: u64,
 }
 
@@ -48,8 +48,8 @@ impl core::ops::Deref for LocalApicAddrOverride {
     }
 }
 
-#[repr(C, packed)]
 #[derive(Debug, Clone, Copy)]
+#[repr(C, packed)]
 pub struct LocalApicNmi {
     header: super::IcHeader,
     pub acpi_proc_id: u8,

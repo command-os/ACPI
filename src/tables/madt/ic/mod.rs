@@ -29,8 +29,8 @@ pub enum InterruptController {
     OemReserved(&'static IcHeader),
 }
 
-#[repr(C, packed)]
 #[derive(Debug, Clone, Copy)]
+#[repr(C, packed)]
 pub struct IcHeader {
     pub type_: u8,
     length: u8,

@@ -3,12 +3,12 @@
 
 use modular_bitfield::prelude::*;
 
-#[repr(C, packed)]
 #[derive(Debug, Clone, Copy)]
+#[repr(C, packed)]
 pub struct IoApic {
     header: super::IcHeader,
     pub id: u8,
-    _reserved: u8,
+    __: u8,
     pub address: u32,
     pub gsi_base: u32,
 }
@@ -91,8 +91,8 @@ impl IoApic {
     }
 }
 
-#[repr(C, packed)]
 #[derive(Debug, Clone, Copy)]
+#[repr(C, packed)]
 pub struct Iso {
     header: super::IcHeader,
     pub bus: u8,
@@ -109,8 +109,8 @@ impl core::ops::Deref for Iso {
     }
 }
 
-#[repr(C, packed)]
 #[derive(Debug, Clone, Copy)]
+#[repr(C, packed)]
 pub struct NmiSource {
     header: super::IcHeader,
     pub flags: amd64::spec::mps::Inti,
