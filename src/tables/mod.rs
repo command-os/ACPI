@@ -5,10 +5,10 @@ use core::any::type_name;
 
 pub mod bgrt;
 pub mod madt;
+pub mod mcfg;
 pub mod rsdp;
 pub mod rsdt;
 pub mod xsdt;
-pub mod mcfg;
 
 #[repr(C, packed)]
 #[derive(Clone, Copy)]
