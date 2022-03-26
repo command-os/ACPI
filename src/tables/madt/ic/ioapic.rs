@@ -44,6 +44,7 @@ pub enum DeliveryMode {
 
 #[bitfield(bits = 64)]
 #[derive(Debug)]
+#[repr(u64)]
 pub struct IoApicRedirect {
     pub vector: u8,
     pub delivery_mode: DeliveryMode,
@@ -79,21 +80,12 @@ impl IoApic {
 
     pub fn read_redir(&self, num: u32) -> IoApicRedirect {
         let reg = IoApicRegister::IoRedirTbl as u32 + num * 2;
-        IoApicRedirect::from_bytes(
-            [
-                self.read(reg).to_le_bytes(),
-                self.read(reg + 1).to_le_bytes(),
-            ]
-            .concat()
-            .as_slice()
-            .try_into()
-            .unwrap(),
-        )
+        IoApicRedirect::from(self.read(reg) as u64 | ((self.read(reg + 1) as u64) << 32))
     }
 
     pub fn write_redir(&self, num: u32, redir: IoApicRedirect) {
         let reg = IoApicRegister::IoRedirTbl as u32 + num * 2;
-        let val = u64::from_le_bytes(redir.into_bytes());
+        let val = u64::from(redir);
         self.write(reg, val as u32);
         self.write(reg + 1, (val >> 32) as u32);
     }
