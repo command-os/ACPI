@@ -55,8 +55,8 @@ pub struct IoApicRedirect {
     pub trigger_at_level: bool,
     pub masked: bool,
     #[skip]
-    __: B40,
-    pub dest: B7,
+    __: B39,
+    pub dest: u8,
 }
 
 impl IoApic {
