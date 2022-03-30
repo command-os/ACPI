@@ -59,6 +59,18 @@ pub struct IoApicRedirect {
     pub dest: u8,
 }
 
+#[bitfield(bits = 32)]
+#[derive(Debug)]
+#[repr(u32)]
+pub struct IoApicVer {
+    pub ver: u8,
+    #[skip]
+    __: u8,
+    pub max_redir: u8,
+    #[skip]
+    __: u8,
+}
+
 impl IoApic {
     fn base(&self, off: u8) -> *mut u32 {
         (self.address as usize + off as usize + amd64::paging::PHYS_VIRT_OFFSET) as *mut u32
@@ -76,6 +88,10 @@ impl IoApic {
             self.base(0).write_volatile(reg);
             self.base(0x10).write_volatile(val);
         }
+    }
+
+    pub fn read_ver(&self) -> IoApicVer {
+        IoApicVer::from(self.read(IoApicRegister::IoApicVer as u32))
     }
 
     pub fn read_redir(&self, num: u32) -> IoApicRedirect {
