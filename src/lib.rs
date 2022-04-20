@@ -4,6 +4,4 @@
 #![no_std]
 #![deny(warnings, clippy::cargo, unused_extern_crates, rust_2021_compatibility)]
 
-extern crate alloc;
-
 pub mod tables;
