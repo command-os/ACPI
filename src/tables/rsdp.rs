@@ -97,7 +97,7 @@ impl Rsdp {
         }
     }
 
-    pub fn into_type(&self) -> RsdtType {
+    pub fn as_type(&self) -> RsdtType {
         // This is fine.
         unsafe {
             match self.revision {
@@ -121,7 +121,7 @@ impl core::fmt::Debug for Rsdp {
             .field("oem_id", &self.oem_id())
             .field("revision", &self.revision)
             .field("length", &self.length())
-            .field("type", &self.into_type())
+            .field("type", &self.as_type())
             .finish()
     }
 }
