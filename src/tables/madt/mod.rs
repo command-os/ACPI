@@ -44,7 +44,11 @@ impl Iterator for MadtIterator {
             self.curr += next.length();
             unsafe {
                 Some(match next.type_ {
-                    0 => InterruptController::ProcessorLocalApic(&*(next as *const _ as *const ProcessorLocalApic)),
+                    0 => {
+                        InterruptController::ProcessorLocalApic(
+                            &*(next as *const _ as *const ProcessorLocalApic),
+                        )
+                    }
                     1 => InterruptController::IoApic(&*(next as *const _ as *const IoApic)),
                     2 => InterruptController::Iso(&*(next as *const _ as *const Iso)),
                     3 => InterruptController::NmiSource(&*(next as *const _ as *const NmiSource)),
