@@ -1,14 +1,14 @@
 //! Copyright (c) VisualDevelopment 2021-2022.
 //! This project is licensed by the Creative Commons Attribution-NoCommercial-NoDerivatives licence.
 
-use self::{ioapic::*, lapic::*};
+use self::{ioapic::*, proc_lapic::*};
 
 pub mod ioapic;
-pub mod lapic;
+pub mod proc_lapic;
 
 #[derive(Debug)]
 pub enum InterruptController {
-    LocalApic(&'static LocalApic),
+    ProcessorLocalApic(&'static ProcessorLocalApic),
     IoApic(&'static IoApic),
     Iso(&'static Iso),
     NmiSource(&'static NmiSource),

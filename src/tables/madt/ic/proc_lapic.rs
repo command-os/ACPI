@@ -6,7 +6,7 @@ use modular_bitfield::prelude::*;
 #[bitfield(bits = 32)]
 #[derive(Debug, Clone, Copy)]
 #[repr(u32)]
-pub struct LocalApicFlags {
+pub struct ProcessorLapicFlags {
     #[skip(setters)]
     pub enabled: bool,
     #[skip(setters)]
@@ -17,14 +17,14 @@ pub struct LocalApicFlags {
 
 #[derive(Debug, Clone, Copy)]
 #[repr(C, packed)]
-pub struct LocalApic {
+pub struct ProcessorLocalApic {
     header: super::IcHeader,
     pub acpi_uid: u8,
     pub apic_id: u8,
-    pub flags: LocalApicFlags,
+    pub flags: ProcessorLapicFlags,
 }
 
-impl core::ops::Deref for LocalApic {
+impl core::ops::Deref for ProcessorLocalApic {
     type Target = super::IcHeader;
 
     fn deref(&self) -> &Self::Target {
