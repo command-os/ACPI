@@ -41,9 +41,9 @@ impl Iterator for RsdtTypeIter {
         } else {
             unsafe {
                 let addr = if self.is_xsdt {
-                    (self.ptr as *const u64).add(self.curr).read_volatile() as usize
+                    (self.ptr as *const u64).add(self.curr).read() as usize
                 } else {
-                    (self.ptr as *const u32).add(self.curr).read_volatile() as usize
+                    (self.ptr as *const u32).add(self.curr).read() as usize
                 };
                 self.curr += 1;
                 ((addr + amd64::paging::PHYS_VIRT_OFFSET) as *const super::SdtHeader).as_ref()
