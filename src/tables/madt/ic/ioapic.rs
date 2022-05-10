@@ -2,6 +2,7 @@
 //! This project is licensed by the Creative Commons Attribution-NoCommercial-NoDerivatives licence.
 
 use modular_bitfield::prelude::*;
+use num_enum::IntoPrimitive;
 
 #[derive(Debug, Clone, Copy)]
 #[repr(C, packed)]
@@ -21,8 +22,8 @@ impl core::ops::Deref for IoApic {
     }
 }
 
+#[derive(Debug, IntoPrimitive)]
 #[repr(u32)]
-#[derive(Debug)]
 pub enum IoApicRegister {
     IoApicId,
     IoApicVer,
@@ -31,14 +32,14 @@ pub enum IoApicRegister {
 }
 
 #[derive(Debug, BitfieldSpecifier)]
-#[repr(u8)]
 #[bits = 3]
+#[repr(u8)]
 pub enum DeliveryMode {
     Fixed,
     LowestPriority,
-    SMI,
-    NMI = 4,
-    INIT,
+    Smi,
+    Nmi = 4,
+    Init,
     ExtINT,
 }
 
@@ -76,9 +77,9 @@ impl IoApic {
         (self.address as usize + off as usize + amd64::paging::PHYS_VIRT_OFFSET) as *mut u32
     }
 
-    pub fn read(&self, reg: u32) -> u32 {
+    pub fn read<T: Into<u32>>(&self, reg: T) -> u32 {
         unsafe {
-            self.base(0).write_volatile(reg);
+            self.base(0).write_volatile(reg.into());
             self.base(0x10).read_volatile()
         }
     }
@@ -91,7 +92,7 @@ impl IoApic {
     }
 
     pub fn read_ver(&self) -> IoApicVer {
-        IoApicVer::from(self.read(IoApicRegister::IoApicVer as u32))
+        IoApicVer::from(self.read(IoApicRegister::IoApicVer))
     }
 
     pub fn read_redir(&self, num: u32) -> IoApicRedirect {
