@@ -15,7 +15,9 @@ pub enum BgrtOrientation {
 #[bitfield(bits = 8)]
 #[derive(Debug, Clone, Copy)]
 pub struct BgrtStatus {
+    #[skip(setters)]
     pub displayed: bool,
+    #[skip(setters)]
     pub offset: BgrtOrientation,
     #[skip]
     __: B5,

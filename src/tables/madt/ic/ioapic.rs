@@ -64,9 +64,11 @@ pub struct IoApicRedirect {
 #[derive(Debug)]
 #[repr(u32)]
 pub struct IoApicVer {
+    #[skip(setters)]
     pub ver: u8,
     #[skip]
     __: u8,
+    #[skip(setters)]
     pub max_redir: u8,
     #[skip]
     __: u8,
