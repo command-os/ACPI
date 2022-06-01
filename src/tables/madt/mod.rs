@@ -44,36 +44,26 @@ impl Iterator for MadtIterator {
             self.curr += next.length();
             unsafe {
                 Some(match next.type_ {
-                    0 => {
-                        InterruptController::ProcessorLocalApic(
-                            &*(next as *const _ as *const ProcessorLocalApic),
-                        )
-                    }
+                    0 => InterruptController::ProcessorLocalApic(
+                        &*(next as *const _ as *const ProcessorLocalApic),
+                    ),
                     1 => InterruptController::IoApic(&*(next as *const _ as *const IoApic)),
                     2 => InterruptController::Iso(&*(next as *const _ as *const Iso)),
                     3 => InterruptController::NmiSource(&*(next as *const _ as *const NmiSource)),
-                    4 => {
-                        InterruptController::LocalApicNmi(
-                            &*(next as *const _ as *const LocalApicNmi),
-                        )
-                    }
-                    5 => {
-                        InterruptController::LocalApicAddrOverride(
-                            &*(next as *const _ as *const LocalApicAddrOverride),
-                        )
-                    }
+                    4 => InterruptController::LocalApicNmi(
+                        &*(next as *const _ as *const LocalApicNmi),
+                    ),
+                    5 => InterruptController::LocalApicAddrOverride(
+                        &*(next as *const _ as *const LocalApicAddrOverride),
+                    ),
                     6 => InterruptController::IoSapic(&*(next as *const _ as *const IcHeader)),
                     7 => InterruptController::LocalSapic(&*(next as *const _ as *const IcHeader)),
-                    8 => {
-                        InterruptController::PlatformInterruptSrcs(
-                            &*(next as *const _ as *const IcHeader),
-                        )
-                    }
-                    9 => {
-                        InterruptController::ProcessorLocalx2Apic(
-                            &*(next as *const _ as *const IcHeader),
-                        )
-                    }
+                    8 => InterruptController::PlatformInterruptSrcs(
+                        &*(next as *const _ as *const IcHeader),
+                    ),
+                    9 => InterruptController::ProcessorLocalx2Apic(
+                        &*(next as *const _ as *const IcHeader),
+                    ),
                     0xA => {
                         InterruptController::Localx2ApicNmi(&*(next as *const _ as *const IcHeader))
                     }
