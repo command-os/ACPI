@@ -4,6 +4,7 @@
 use core::any::type_name;
 
 pub mod bgrt;
+pub mod hpet;
 pub mod madt;
 pub mod mcfg;
 pub mod rsdp;
