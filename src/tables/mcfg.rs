@@ -5,14 +5,14 @@ use core::mem::size_of;
 
 #[derive(Debug, Clone, Copy)]
 #[repr(C, packed)]
-pub struct Mcfg {
-    header: super::SdtHeader,
+pub struct MCFG {
+    header: super::SDTHeader,
     __: u64,
 }
 
 #[derive(Debug, Clone, Copy)]
 #[repr(C, packed)]
-pub struct McfgEntry {
+pub struct MCFGEntry {
     pub base: u64,
     pub segment: u32,
     pub bus_start: u8,
@@ -20,18 +20,18 @@ pub struct McfgEntry {
     __: u32,
 }
 
-impl Mcfg {
-    pub fn entries(&self) -> &'static [McfgEntry] {
-        let len = (self.length() - size_of::<Self>()) / size_of::<McfgEntry>();
+impl MCFG {
+    pub fn entries(&self) -> &'static [MCFGEntry] {
+        let len = (self.length() - size_of::<Self>()) / size_of::<MCFGEntry>();
         unsafe {
-            let data = (self as *const _ as *const u8).add(size_of::<Self>()) as *const McfgEntry;
+            let data = (self as *const _ as *const u8).add(size_of::<Self>()) as *const MCFGEntry;
             core::slice::from_raw_parts(data, len)
         }
     }
 }
 
-impl core::ops::Deref for Mcfg {
-    type Target = super::SdtHeader;
+impl core::ops::Deref for MCFG {
+    type Target = super::SDTHeader;
 
     fn deref(&self) -> &Self::Target {
         &self.header

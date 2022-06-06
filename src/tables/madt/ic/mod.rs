@@ -8,35 +8,35 @@ pub mod proc_lapic;
 
 #[derive(Debug)]
 pub enum InterruptController {
-    ProcessorLocalApic(&'static ProcessorLocalApic),
-    IoApic(&'static IoApic),
-    Iso(&'static Iso),
-    NmiSource(&'static NmiSource),
-    LocalApicNmi(&'static LocalApicNmi),
-    LocalApicAddrOverride(&'static LocalApicAddrOverride),
-    IoSapic(&'static IcHeader),
-    LocalSapic(&'static IcHeader),
-    PlatformInterruptSrcs(&'static IcHeader),
-    ProcessorLocalx2Apic(&'static IcHeader),
-    Localx2ApicNmi(&'static IcHeader),
-    GicCpu(&'static IcHeader),
-    GicDist(&'static IcHeader),
-    GicMsiFrame(&'static IcHeader),
-    GicRedist(&'static IcHeader),
-    GicIts(&'static IcHeader),
-    MpWakeup(&'static IcHeader),
-    Reserved(&'static IcHeader),
-    OemReserved(&'static IcHeader),
+    ProcessorLocalAPIC(&'static ProcessorLocalAPIC),
+    InputOutputAPIC(&'static IOAPIC),
+    InterruptSourceOverride(&'static InterruptSourceOverride),
+    NMISource(&'static NMISource),
+    LocalApicNmi(&'static LocalAPICNMI),
+    LocalAPICAddrOverride(&'static LocalAPICAddrOverride),
+    InputOutputSAPIC(&'static ICHeader),
+    LocalSapic(&'static ICHeader),
+    PlatformInterruptSrcs(&'static ICHeader),
+    ProcessorLocalx2APIC(&'static ICHeader),
+    Localx2APICNmi(&'static ICHeader),
+    GICCPU(&'static ICHeader),
+    GICDist(&'static ICHeader),
+    GICMSIFrame(&'static ICHeader),
+    GICRedist(&'static ICHeader),
+    GICIts(&'static ICHeader),
+    MPWakeup(&'static ICHeader),
+    Reserved(&'static ICHeader),
+    OemReserved(&'static ICHeader),
 }
 
 #[derive(Debug, Clone, Copy)]
 #[repr(C, packed)]
-pub struct IcHeader {
+pub struct ICHeader {
     pub type_: u8,
     length: u8,
 }
 
-impl IcHeader {
+impl ICHeader {
     pub fn length(&self) -> usize {
         self.length.try_into().unwrap()
     }

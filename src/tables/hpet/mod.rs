@@ -3,10 +3,12 @@
 
 use modular_bitfield::prelude::*;
 
+pub mod regs;
+
 #[derive(Debug, BitfieldSpecifier, Clone, Copy)]
 #[bits = 8]
 #[repr(u8)]
-pub enum AddressSpaceId {
+pub enum AddressSpaceID {
     SystemMemory = 0,
     SystemIo,
 }
@@ -15,7 +17,7 @@ pub enum AddressSpaceId {
 #[derive(Debug, Clone, Copy)]
 pub struct Address {
     #[skip(setters)]
-    pub addr_space_id: AddressSpaceId,
+    pub addr_space_id: AddressSpaceID,
     #[skip(setters)]
     pub reg_bit_width: u8,
     #[skip(setters)]
@@ -29,7 +31,7 @@ pub struct Address {
 #[bitfield(bits = 32)]
 #[derive(Debug, Clone, Copy)]
 #[repr(u32)]
-pub struct EventTimerBlockId {
+pub struct EventTimerBlockID {
     #[skip(setters)]
     pub hw_revision: u8,
     #[skip(setters)]
@@ -65,17 +67,17 @@ pub struct PageProtectionAttributes {
 
 #[derive(Debug, Clone, Copy)]
 #[repr(C, packed)]
-pub struct Hpet {
-    header: super::SdtHeader,
-    pub evnt_timer_block: EventTimerBlockId,
+pub struct HPET {
+    header: super::SDTHeader,
+    pub evnt_timer_block: EventTimerBlockID,
     pub address: Address,
     pub hpet_num: u8,
     pub min_tick: u16,
     pub page_prot_attr: PageProtectionAttributes,
 }
 
-impl core::ops::Deref for Hpet {
-    type Target = super::SdtHeader;
+impl core::ops::Deref for HPET {
+    type Target = super::SDTHeader;
 
     fn deref(&self) -> &Self::Target {
         &self.header

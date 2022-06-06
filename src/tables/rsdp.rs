@@ -3,10 +3,10 @@
 
 use core::{any::type_name, mem::size_of};
 
-use super::{rsdt::Rsdt, xsdt::Xsdt};
+use super::{rsdt::RSDT, xsdt::XSDT};
 
 #[repr(C, packed)]
-pub struct Rsdp {
+pub struct RSDP {
     signature: [u8; 8],
     checksum: u8,
     oem_id: [u8; 6],
@@ -19,21 +19,21 @@ pub struct Rsdp {
 }
 
 #[derive(Debug)]
-pub enum RsdtType {
-    Rsdt(&'static Rsdt),
-    Xsdt(&'static Xsdt),
+pub enum RSDTType {
+    Rsdt(&'static RSDT),
+    Xsdt(&'static XSDT),
 }
 
 #[derive(Debug)]
-pub struct RsdtTypeIter {
+pub struct RSDTTypeIter {
     ptr: *const u8,
     is_xsdt: bool,
     curr: usize,
     total: usize,
 }
 
-impl Iterator for RsdtTypeIter {
-    type Item = &'static super::SdtHeader;
+impl Iterator for RSDTTypeIter {
+    type Item = &'static super::SDTHeader;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.curr == self.total {
@@ -46,22 +46,22 @@ impl Iterator for RsdtTypeIter {
                     (self.ptr as *const u32).add(self.curr).read() as usize
                 };
                 self.curr += 1;
-                ((addr + amd64::paging::PHYS_VIRT_OFFSET) as *const super::SdtHeader).as_ref()
+                ((addr + amd64::paging::PHYS_VIRT_OFFSET) as *const super::SDTHeader).as_ref()
             }
         }
     }
 }
 
-impl RsdtType {
-    pub fn iter(&self) -> RsdtTypeIter {
+impl RSDTType {
+    pub fn iter(&self) -> RSDTTypeIter {
         unsafe {
             let (is_xsdt, length, header) = match *self {
-                RsdtType::Rsdt(v) => (false, v.length(), v as *const _ as *const u8),
-                RsdtType::Xsdt(v) => (true, v.length(), v as *const _ as *const u8),
+                RSDTType::Rsdt(v) => (false, v.length(), v as *const _ as *const u8),
+                RSDTType::Xsdt(v) => (true, v.length(), v as *const _ as *const u8),
             };
-            let total = (length - size_of::<super::SdtHeader>()) / if is_xsdt { 8 } else { 4 };
-            let ptr = header.add(size_of::<super::SdtHeader>());
-            RsdtTypeIter {
+            let total = (length - size_of::<super::SDTHeader>()) / if is_xsdt { 8 } else { 4 };
+            let ptr = header.add(size_of::<super::SDTHeader>());
+            RSDTTypeIter {
                 ptr,
                 is_xsdt,
                 curr: 0,
@@ -71,7 +71,7 @@ impl RsdtType {
     }
 }
 
-impl Rsdp {
+impl RSDP {
     pub fn validate(&self) -> bool {
         let sum = unsafe {
             let bytes = core::slice::from_raw_parts(self as *const _ as *const u8, self.length());
@@ -97,24 +97,24 @@ impl Rsdp {
         }
     }
 
-    pub fn as_type(&self) -> RsdtType {
+    pub fn as_type(&self) -> RSDTType {
         // This is fine.
         unsafe {
             match self.revision {
                 0 => {
                     let addr = self.rsdt_addr as usize + amd64::paging::PHYS_VIRT_OFFSET;
-                    RsdtType::Rsdt((addr as *const Rsdt).as_ref().unwrap())
+                    RSDTType::Rsdt((addr as *const RSDT).as_ref().unwrap())
                 }
                 _ => {
                     let addr = self.xsdt_addr as usize + amd64::paging::PHYS_VIRT_OFFSET;
-                    RsdtType::Xsdt((addr as *const Xsdt).as_ref().unwrap())
+                    RSDTType::Xsdt((addr as *const XSDT).as_ref().unwrap())
                 }
             }
         }
     }
 }
 
-impl core::fmt::Debug for Rsdp {
+impl core::fmt::Debug for RSDP {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct(type_name::<Self>())
             .field("valid", &self.validate())

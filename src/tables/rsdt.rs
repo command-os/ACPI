@@ -2,19 +2,19 @@
 //! This project is licensed by the Creative Commons Attribution-NoCommercial-NoDerivatives licence.
 
 #[repr(C, packed)]
-pub struct Rsdt {
-    header: super::SdtHeader,
+pub struct RSDT {
+    header: super::SDTHeader,
 }
 
-impl core::ops::Deref for Rsdt {
-    type Target = super::SdtHeader;
+impl core::ops::Deref for RSDT {
+    type Target = super::SDTHeader;
 
     fn deref(&self) -> &Self::Target {
         &self.header
     }
 }
 
-impl core::fmt::Debug for Rsdt {
+impl core::fmt::Debug for RSDT {
     fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         f.debug_struct("Rsdt")
             .field("header", &self.header)

@@ -6,16 +6,16 @@ use num_enum::IntoPrimitive;
 
 #[derive(Debug, Clone, Copy)]
 #[repr(C, packed)]
-pub struct IoApic {
-    header: super::IcHeader,
+pub struct IOAPIC {
+    header: super::ICHeader,
     pub id: u8,
     __: u8,
     pub address: u32,
     pub gsi_base: u32,
 }
 
-impl core::ops::Deref for IoApic {
-    type Target = super::IcHeader;
+impl core::ops::Deref for IOAPIC {
+    type Target = super::ICHeader;
 
     fn deref(&self) -> &Self::Target {
         &self.header
@@ -24,11 +24,11 @@ impl core::ops::Deref for IoApic {
 
 #[derive(Debug, IntoPrimitive)]
 #[repr(u32)]
-pub enum IoApicRegister {
-    IoApicId,
-    IoApicVer,
-    IoApicArbId,
-    IoRedirTbl = 0x10,
+pub enum IOAPICReg {
+    ID,
+    Ver,
+    ArbID,
+    IORedirTable = 0x10,
 }
 
 #[derive(Debug, BitfieldSpecifier)]
@@ -37,8 +37,8 @@ pub enum IoApicRegister {
 pub enum DeliveryMode {
     Fixed,
     LowestPriority,
-    Smi,
-    Nmi = 4,
+    SMI,
+    NMI = 4,
     Init,
     ExtINT,
 }
@@ -46,7 +46,7 @@ pub enum DeliveryMode {
 #[bitfield(bits = 64)]
 #[derive(Debug)]
 #[repr(u64)]
-pub struct IoApicRedirect {
+pub struct IOAPICRedir {
     pub vector: u8,
     pub delivery_mode: DeliveryMode,
     pub logical_dest: bool,
@@ -63,7 +63,7 @@ pub struct IoApicRedirect {
 #[bitfield(bits = 32)]
 #[derive(Debug)]
 #[repr(u32)]
-pub struct IoApicVer {
+pub struct IOAPICVer {
     #[skip(setters)]
     pub ver: u8,
     #[skip]
@@ -74,7 +74,7 @@ pub struct IoApicVer {
     __: u8,
 }
 
-impl IoApic {
+impl IOAPIC {
     fn base(&self, off: u8) -> *mut u32 {
         (self.address as usize + off as usize + amd64::paging::PHYS_VIRT_OFFSET) as *mut u32
     }
@@ -93,17 +93,17 @@ impl IoApic {
         }
     }
 
-    pub fn read_ver(&self) -> IoApicVer {
-        IoApicVer::from(self.read(IoApicRegister::IoApicVer))
+    pub fn read_ver(&self) -> IOAPICVer {
+        IOAPICVer::from(self.read(IOAPICReg::Ver))
     }
 
-    pub fn read_redir(&self, num: u32) -> IoApicRedirect {
-        let reg = IoApicRegister::IoRedirTbl as u32 + num * 2;
-        IoApicRedirect::from(self.read(reg) as u64 | ((self.read(reg + 1) as u64) << 32))
+    pub fn read_redir(&self, num: u32) -> IOAPICRedir {
+        let reg = IOAPICReg::IORedirTable as u32 + num * 2;
+        IOAPICRedir::from(self.read(reg) as u64 | ((self.read(reg + 1) as u64) << 32))
     }
 
-    pub fn write_redir(&self, num: u32, redir: IoApicRedirect) {
-        let reg = IoApicRegister::IoRedirTbl as u32 + num * 2;
+    pub fn write_redir(&self, num: u32, redir: IOAPICRedir) {
+        let reg = IOAPICReg::IORedirTable as u32 + num * 2;
         let val = u64::from(redir);
         self.write(reg, val as u32);
         self.write(reg + 1, (val >> 32) as u32);
@@ -112,16 +112,16 @@ impl IoApic {
 
 #[derive(Debug, Clone, Copy)]
 #[repr(C, packed)]
-pub struct Iso {
-    header: super::IcHeader,
+pub struct InterruptSourceOverride {
+    header: super::ICHeader,
     pub bus: u8,
     pub irq: u8,
     pub gsi: u32,
     pub flags: amd64::spec::mps::Inti,
 }
 
-impl core::ops::Deref for Iso {
-    type Target = super::IcHeader;
+impl core::ops::Deref for InterruptSourceOverride {
+    type Target = super::ICHeader;
 
     fn deref(&self) -> &Self::Target {
         &self.header
@@ -130,14 +130,14 @@ impl core::ops::Deref for Iso {
 
 #[derive(Debug, Clone, Copy)]
 #[repr(C, packed)]
-pub struct NmiSource {
-    header: super::IcHeader,
+pub struct NMISource {
+    header: super::ICHeader,
     pub flags: amd64::spec::mps::Inti,
     pub gsi: u32,
 }
 
-impl core::ops::Deref for NmiSource {
-    type Target = super::IcHeader;
+impl core::ops::Deref for NMISource {
+    type Target = super::ICHeader;
 
     fn deref(&self) -> &Self::Target {
         &self.header

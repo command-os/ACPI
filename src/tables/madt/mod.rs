@@ -12,7 +12,7 @@ pub mod ic;
 #[bitfield(bits = 32)]
 #[repr(u32)]
 #[derive(Debug, Copy, Clone)]
-pub struct MadtFlags {
+pub struct MADTFlags {
     #[skip(setters)]
     pub pcat_compat: bool,
     #[skip]
@@ -21,65 +21,71 @@ pub struct MadtFlags {
 
 #[repr(C, packed)]
 #[derive(Debug, Copy, Clone)]
-pub struct Madt {
-    header: super::SdtHeader,
+pub struct MADT {
+    header: super::SDTHeader,
     local_ic_addr: u32,
-    pub flags: MadtFlags,
+    pub flags: MADTFlags,
 }
 
-pub struct MadtIterator {
+pub struct MADTIter {
     ptr: *const u8,
     curr: usize,
     total: usize,
 }
 
-impl Iterator for MadtIterator {
+impl Iterator for MADTIter {
     type Item = InterruptController;
 
     fn next(&mut self) -> core::option::Option<<Self as core::iter::Iterator>::Item> {
         if self.curr == self.total {
             None
         } else {
-            let next = unsafe { &*(self.ptr.add(self.curr) as *const IcHeader) };
+            let next = unsafe { &*(self.ptr.add(self.curr) as *const ICHeader) };
             self.curr += next.length();
             unsafe {
                 Some(match next.type_ {
-                    0 => InterruptController::ProcessorLocalApic(
-                        &*(next as *const _ as *const ProcessorLocalApic),
+                    0 => InterruptController::ProcessorLocalAPIC(
+                        &*(next as *const _ as *const ProcessorLocalAPIC),
                     ),
-                    1 => InterruptController::IoApic(&*(next as *const _ as *const IoApic)),
-                    2 => InterruptController::Iso(&*(next as *const _ as *const Iso)),
-                    3 => InterruptController::NmiSource(&*(next as *const _ as *const NmiSource)),
+                    1 => {
+                        InterruptController::InputOutputAPIC(&*(next as *const _ as *const IOAPIC))
+                    }
+                    2 => InterruptController::InterruptSourceOverride(
+                        &*(next as *const _ as *const InterruptSourceOverride),
+                    ),
+                    3 => InterruptController::NMISource(&*(next as *const _ as *const NMISource)),
                     4 => InterruptController::LocalApicNmi(
-                        &*(next as *const _ as *const LocalApicNmi),
+                        &*(next as *const _ as *const LocalAPICNMI),
                     ),
-                    5 => InterruptController::LocalApicAddrOverride(
-                        &*(next as *const _ as *const LocalApicAddrOverride),
+                    5 => InterruptController::LocalAPICAddrOverride(
+                        &*(next as *const _ as *const LocalAPICAddrOverride),
                     ),
-                    6 => InterruptController::IoSapic(&*(next as *const _ as *const IcHeader)),
-                    7 => InterruptController::LocalSapic(&*(next as *const _ as *const IcHeader)),
+                    6 => InterruptController::InputOutputSAPIC(
+                        &*(next as *const _ as *const ICHeader),
+                    ),
+                    7 => InterruptController::LocalSapic(&*(next as *const _ as *const ICHeader)),
                     8 => InterruptController::PlatformInterruptSrcs(
-                        &*(next as *const _ as *const IcHeader),
+                        &*(next as *const _ as *const ICHeader),
                     ),
-                    9 => InterruptController::ProcessorLocalx2Apic(
-                        &*(next as *const _ as *const IcHeader),
+                    9 => InterruptController::ProcessorLocalx2APIC(
+                        &*(next as *const _ as *const ICHeader),
                     ),
                     0xA => {
-                        InterruptController::Localx2ApicNmi(&*(next as *const _ as *const IcHeader))
+                        InterruptController::Localx2APICNmi(&*(next as *const _ as *const ICHeader))
                     }
-                    0xB => InterruptController::GicCpu(&*(next as *const _ as *const IcHeader)),
-                    0xC => InterruptController::GicDist(&*(next as *const _ as *const IcHeader)),
+                    0xB => InterruptController::GICCPU(&*(next as *const _ as *const ICHeader)),
+                    0xC => InterruptController::GICDist(&*(next as *const _ as *const ICHeader)),
                     0xD => {
-                        InterruptController::GicMsiFrame(&*(next as *const _ as *const IcHeader))
+                        InterruptController::GICMSIFrame(&*(next as *const _ as *const ICHeader))
                     }
-                    0xE => InterruptController::GicRedist(&*(next as *const _ as *const IcHeader)),
-                    0xF => InterruptController::GicIts(&*(next as *const _ as *const IcHeader)),
-                    0x10 => InterruptController::MpWakeup(&*(next as *const _ as *const IcHeader)),
+                    0xE => InterruptController::GICRedist(&*(next as *const _ as *const ICHeader)),
+                    0xF => InterruptController::GICIts(&*(next as *const _ as *const ICHeader)),
+                    0x10 => InterruptController::MPWakeup(&*(next as *const _ as *const ICHeader)),
                     0x11..=0x7F => {
-                        InterruptController::Reserved(&*(next as *const _ as *const IcHeader))
+                        InterruptController::Reserved(&*(next as *const _ as *const ICHeader))
                     }
                     0x80..=0xFF => {
-                        InterruptController::OemReserved(&*(next as *const _ as *const IcHeader))
+                        InterruptController::OemReserved(&*(next as *const _ as *const ICHeader))
                     }
                 })
             }
@@ -87,13 +93,13 @@ impl Iterator for MadtIterator {
     }
 }
 
-impl Madt {
+impl MADT {
     pub fn local_ic_addr(&self) -> u64 {
         self.local_ic_addr as u64
     }
 
-    pub fn into_iter(&self) -> MadtIterator {
-        MadtIterator {
+    pub fn into_iter(&self) -> MADTIter {
+        MADTIter {
             ptr: unsafe { (self as *const _ as *const u8).add(size_of::<Self>()) },
             curr: 0,
             total: self.length as usize - size_of::<Self>(),
@@ -101,8 +107,8 @@ impl Madt {
     }
 }
 
-impl core::ops::Deref for Madt {
-    type Target = super::SdtHeader;
+impl core::ops::Deref for MADT {
+    type Target = super::SDTHeader;
 
     fn deref(&self) -> &Self::Target {
         &self.header
