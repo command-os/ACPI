@@ -76,6 +76,45 @@ pub struct HPET {
     pub page_prot_attr: PageProtectionAttributes,
 }
 
+impl HPET {
+    pub fn read_reg<T: Into<u64>>(&self, reg: T) -> u64 {
+        unsafe {
+            *((self.address.address() as usize
+                + amd64::paging::PHYS_VIRT_OFFSET
+                + reg.into() as usize) as *const u64)
+        }
+    }
+
+    pub fn write_reg<T: Into<u64>>(&self, reg: T, value: u64) {
+        unsafe {
+            ((self.address.address() as usize
+                + amd64::paging::PHYS_VIRT_OFFSET
+                + reg.into() as usize) as *mut u64)
+                .write_volatile(value);
+        }
+    }
+
+    pub fn counter_value(&self) -> u64 {
+        self.read_reg(regs::HPETReg::MainCounterValue)
+    }
+
+    pub fn set_counter_value(&self, value: u64) {
+        self.write_reg(regs::HPETReg::MainCounterValue, value);
+    }
+
+    pub fn capabilities(&self) -> regs::GeneralCapabilities {
+        self.read_reg(regs::HPETReg::GeneralCapabilities).into()
+    }
+
+    pub fn config(&self) -> regs::GeneralConfiguration {
+        self.read_reg(regs::HPETReg::GeneralConfiguration).into()
+    }
+
+    pub fn set_config(&self, value: regs::GeneralConfiguration) {
+        self.write_reg(regs::HPETReg::GeneralConfiguration, value.into());
+    }
+}
+
 impl core::ops::Deref for HPET {
     type Target = super::SDTHeader;
 

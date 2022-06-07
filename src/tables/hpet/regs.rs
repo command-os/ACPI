@@ -2,9 +2,11 @@
 //! This project is licensed by the Creative Commons Attribution-NoCommercial-NoDerivatives licence.
 
 use modular_bitfield::prelude::*;
+use num_enum::IntoPrimitive;
 
 #[repr(u64)]
-pub enum HPETRegister {
+#[derive(IntoPrimitive)]
+pub enum HPETReg {
     GeneralCapabilities = 0x000,
     GeneralConfiguration = 0x010,
     GeneralInterruptStatus = 0x020,
