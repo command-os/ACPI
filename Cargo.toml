@@ -1,11 +1,11 @@
 [package]
 name = "acpi"
-description = "The Firework ACPI implementation crate"
+description = "The BoxOS ACPI implementation crate"
 repository = "https://github.com/Firework-OS/ACPI"
 keywords = ["firework", "acpi", "amd64", "x86_64"]
 categories = ["no-std"]
 version = "0.1.0"
-authors = ["VisualDevelopment"]
+authors = ["ChefKiss Inc"]
 edition = "2021"
 license-file = "LICENSE"
 
@@ -13,7 +13,7 @@ license-file = "LICENSE"
 lto = true
 
 [dependencies]
-amd64 = { path = "../AMD64" }
+amd64 = { path = "../AMD64Lib" }
 num_enum = { version = "0.5.7", default-features = false, features = [
     "nightly",
 ] }
